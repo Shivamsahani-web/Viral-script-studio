@@ -57,32 +57,26 @@ Return ONLY raw JSON, no markdown code fences, no commentary, matching exactly t
 }`;
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const model = "gemini-2.5-flash";
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${process.env.GEMINI_API_KEY}`;
+
+    const response = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 1400,
-        messages: [{ role: "user", content: prompt }],
+        contents: [{ parts: [{ text: prompt }] }],
       }),
     });
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error("Anthropic API error:", errText);
+      console.error("Gemini API error:", errText);
       res.status(502).json({ error: "Upstream API error" });
       return;
     }
 
     const data = await response.json();
-    const text = (data.content || [])
-      .map((b) => (b.type === "text" ? b.text : ""))
-      .join("\n")
-      .trim();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
     const clean = text.replace(/```json|```/g, "").trim();
     const parsed = JSON.parse(clean);
 
