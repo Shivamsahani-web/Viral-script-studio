@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Viral Script Studio</title>
+<meta name="theme-color" content="#121316" />
+<link rel="manifest" href="/manifest.json" />
+<link rel="icon" href="/icon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/icon.svg" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #121316;
+    color: #F2F0EA;
+    font-family: 'Inter', sans-serif;
+    padding-bottom: 60px;
+  }
+  input, textarea {
+    width: 100%;
+    background: #181A20;
+    border: 1px solid #2C2F38;
+    border-radius: 10px;
+    padding: 13px 14px;
+    color: #F2F0EA;
+    font-family: 'Inter', sans-serif;
+    font-size: 14.5px;
+    outline: none;
+  }
+  input::placeholder, textarea::placeholder { color: #5C5F68; }
+  input:focus, textarea:focus { border-color: #FF4747; }
+  textarea { resize: vertical; min-height: 76px; line-height: 1.5; }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 0 20px; }
+  .chip {
+    padding: 9px 14px; border-radius: 999px; border: 1px solid #2C2F38;
+    background: #181A20; color: #9EA1AA; font-size: 13.5px; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+  }
+  .chip.active { border-color: #FF4747; background: rgba(255,71,71,0.12); color: #FF6B6B; }
+  .field-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1.2px;
+    text-transform: uppercase; color: #6B6E78; margin-bottom: 9px; font-weight: 500;
+  }
+  .card { background: #16171C; border: 1px solid #24262E; border-radius: 16px; padding: 20px; }
+  .btn-primary {
+    width: 100%; margin-top: 4px; padding: 15px 18px; border-radius: 12px; border: none;
+    background: #FF4747; color: #151517; font-weight: 700; font-size: 15px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+  }
+  .btn-primary:disabled { background: #2A2C33; color: #6B6E78; cursor: not-allowed; }
+  .btn-secondary {
+    padding: 13px 16px; border-radius: 12px; border: 1px solid #2C2F38; background: #181A20;
+    color: #DCDBD6; font-weight: 600; font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .copy-btn {
+    display: flex; align-items: center; gap: 6px; background: #20232B; border: 1px solid #2C2F38;
+    color: #B7BAC2; border-radius: 8px; padding: 6px 10px; font-size: 11.5px; font-weight: 600; cursor: pointer;
+  }
+  .copy-btn.copied { background: rgba(78,205,196,0.14); border-color: #3AA89F; color: #7EE0D6; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .spin { animation: spin 1s linear infinite; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes pulseRec {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,71,71,0.5); }
+    50% { opacity: 0.5; box-shadow: 0 0 0 6px rgba(255,71,71,0); }
+  }
+  .rec-dot { width: 8px; height: 8px; border-radius: 999px; background: #FF4747; display: inline-block; animation: pulseRec 1.8s infinite; }
+</style>
+</head>
+<body>
+
+<div class="wrap" style="padding-top:34px; padding-bottom:22px;">
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">
+    <span class="rec-dot"></span>
+    <span class="mono" style="font-size:11.5px; letter-spacing:2px; color:#8A8D96; text-transform:uppercase;">Script Studio · Live</span>
+  </div>
+  <h1 style="font-family:'Anton',sans-serif; font-weight:400; font-size:34px; line-height:1.08; letter-spacing:0.3px; margin:0; color:#FAF9F6;">
+    APNA AGLA VIRAL<br/><span style="color:#FF4747;">VIDEO LIKHO</span>
+  </h1>
+  <p style="color:#92959E; font-size:14.5px; margin-top:12px; line-height:1.5;">
+    Strong hook, human tone, high-CTR structure — Instagram aur YouTube ke liye, seconds mein.
+  </p>
+</div>
+
+<div class="wrap">
+  <div class="card">
+    <div style="margin-bottom:20px;">
+      <div class="field-label">Niche</div>
+      <input id="niche" placeholder="Fitness, Finance, Comedy, Beauty, Tech..." />
+    </div>
+    <div style="margin-bottom:20px;">
+      <div class="field-label">Topic / Idea</div>
+      <textarea id="topic" placeholder="Is video mein kya batana hai? Jitna specific, utna behtar script."></textarea>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div class="field-label">Platform</div>
+      <div id="platform-chips" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div class="field-label">Tone</div>
+      <div id="tone-chips" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div class="field-label">Language</div>
+      <div id="lang-chips" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+    </div>
+    <div style="margin-bottom:20px;">
+      <div class="field-label">Duration</div>
+      <div id="dur-chips" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+    </div>
+
+    <button id="generateBtn" class="btn-primary">Script Generate Karo</button>
+    <p id="hint" style="font-size:12px; color:#5C5F68; margin-top:10px; text-align:center;">
+      Niche aur topic dono fill karo generate karne ke liye.
+    </p>
+    <p id="errorMsg" style="font-size:13px; color:#FF8A8A; margin-top:12px; text-align:center; display:none;"></p>
+  </div>
+</div>
+
+<div class="wrap" id="resultWrap" style="margin-top:28px; display:none;"></div>
+
+<div style="text-align:center; margin-top:30px;">
+  <span class="mono" style="font-size:10.5px; color:#4A4C54; letter-spacing:1px;">BUILT FOR CREATORS</span>
+</div>
+
+<script>
+const PLATFORMS = [{id:"reels",label:"Reels / Shorts"},{id:"youtube",label:"YouTube Video"}];
+const TONES = [{id:"energetic",label:"Energetic"},{id:"storytelling",label:"Storytelling"},{id:"emotional",label:"Emotional"},{id:"educational",label:"Educational"},{id:"funny",label:"Funny"}];
+const LANGS = [{id:"hinglish",label:"Hinglish"},{id:"hindi",label:"Hindi"},{id:"english",label:"English"}];
+const DURATIONS = [{id:"15-30s",label:"15–30s"},{id:"30-60s",label:"30–60s"},{id:"1-3min",label:"1–3 min"},{id:"3-5min",label:"3–5 min"}];
+
+const state = {
+  platform: "reels", tone: "energetic", language: "hinglish", duration: "15-30s",
+  loading: false, result: null, activeHook: 0,
+};
+
+function renderChips(containerId, list, selectedKey) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = "";
+  list.forEach(item => {
+    const btn = document.createElement("button");
+    btn.className = "chip" + (state[selectedKey] === item.id ? " active" : "");
+    btn.textContent = item.label;
+    btn.onclick = () => { state[selectedKey] = item.id; renderAllChips(); };
+    el.appendChild(btn);
+  });
+}
+function renderAllChips() {
+  renderChips("platform-chips", PLATFORMS, "platform");
+  renderChips("tone-chips", TONES, "tone");
+  renderChips("lang-chips", LANGS, "language");
+  renderChips("dur-chips", DURATIONS, "duration");
+}
+renderAllChips();
+
+const nicheEl = document.getElementById("niche");
+const topicEl = document.getElementById("topic");
+const btn = document.getElementById("generateBtn");
+const hint = document.getElementById("hint");
+const errorMsg = document.getElementById("errorMsg");
+
+function updateButtonState() {
+  const ok = nicheEl.value.trim() && topicEl.value.trim() && !state.loading;
+  btn.disabled = !ok;
+  hint.style.display = (nicheEl.value.trim() && topicEl.value.trim()) ? "none" : "block";
+}
+nicheEl.addEventListener("input", updateButtonState);
+topicEl.addEventListener("input", updateButtonState);
+updateButtonState();
+
+async function copyText(text, btnEl) {
+  try {
+    await navigator.clipboard.writeText(text);
+    const original = btnEl.innerHTML;
+    btnEl.classList.add("copied");
+    btnEl.innerHTML = "Copied";
+    setTimeout(() => { btnEl.classList.remove("copied"); btnEl.innerHTML = original; }, 1600);
+  } catch (e) {}
+}
+
+function fullScriptText() {
+  const r = state.result;
+  if (!r) return "";
+  return [
+    `HOOK: ${r.hooks[state.activeHook] || ""}`, "",
+    ...r.timeline.map(t => `[${t.time}] ${t.label}\n${t.content}`), "",
+    `CTA: ${r.cta}`, "", `CAPTION: ${r.caption}`, "", (r.hashtags||[]).join(" ")
+  ].join("\n");
+}
+
+function renderResult() {
+  const wrap = document.getElementById("resultWrap");
+  const r = state.result;
+  if (!r) { wrap.style.display = "none"; return; }
+  wrap.style.display = "block";
+
+  const hookButtons = r.hooks.map((h,i) => `
+    <button class="chip ${i===state.activeHook ? 'active':''}" style="font-family:'JetBrains Mono',monospace; font-size:11.5px;" onclick="setActiveHook(${i})">Hook ${i+1}</button>
+  `).join("");
+
+  const timelineItems = r.timeline.map((beat,i) => `
+    <div style="display:flex; gap:14px; margin-bottom:20px; position:relative;">
+      <div style="width:41px; display:flex; flex-direction:column; align-items:center; flex-shrink:0;">
+        <div style="width:9px; height:9px; border-radius:999px; background:${i===0?'#FF4747':'#4ECDC4'}; z-index:1; margin-top:4px;"></div>
+      </div>
+      <div style="flex:1; min-width:0;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+          <span class="mono" style="font-size:11px; color:#6B6E78;">⏱ ${beat.time}</span>
+          <span style="font-size:10.5px; font-weight:700; letter-spacing:0.8px; color:${i===0?'#FF8A8A':'#7EE0D6'}; text-transform:uppercase;">${beat.label}</span>
+        </div>
+        <p class="mono" style="font-size:13.5px; line-height:1.6; color:#DCDBD6; margin:0; white-space:pre-wrap;">${beat.content}</p>
+      </div>
+    </div>
+  `).join("");
+
+  const hashtagChips = (r.hashtags||[]).map(h => `
+    <span class="mono" style="font-size:12px; color:#7EE0D6; background:rgba(78,205,196,0.08); border:1px solid rgba(78,205,196,0.25); border-radius:6px; padding:4px 8px;">${h}</span>
+  `).join("");
+
+  wrap.innerHTML = `
+    <div style="background:linear-gradient(160deg,#1D1416 0%,#16171C 60%); border:1px solid #3A2226; border-radius:16px; padding:18px; margin-bottom:14px;">
+      <div style="display:flex; align-items:center; gap:7px; margin-bottom:12px;">
+        <span class="mono" style="font-size:11px; letter-spacing:1.4px; color:#FFC857; text-transform:uppercase;">⚡ High-CTR Hook</span>
+      </div>
+      <p style="font-size:18.5px; line-height:1.4; font-weight:600; color:#FAF9F6; margin:0 0 14px;">${r.hooks[state.activeHook]}</p>
+      <div style="display:flex; gap:7px; flex-wrap:wrap;">${hookButtons}</div>
+    </div>
+
+    <div class="card" style="padding:18px 16px 6px; margin-bottom:14px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; padding:0 4px;">
+        <span class="mono" style="font-size:11px; letter-spacing:1.4px; color:#8A8D96; text-transform:uppercase;">🎬 Script Timeline</span>
+        <button class="copy-btn" onclick="copyText(fullScriptText(), this)">Copy</button>
+      </div>
+      <div style="position:relative; padding-left:4px;">${timelineItems}</div>
+    </div>
+
+    <div style="background:rgba(255,200,87,0.07); border:1px solid #4A3F22; border-radius:16px; padding:16px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+      <div style="min-width:0;">
+        <span class="mono" style="font-size:11px; letter-spacing:1.2px; color:#FFC857; text-transform:uppercase;">Final CTA</span>
+        <p style="margin:6px 0 0; font-size:14.5px; line-height:1.5; color:#F2F0EA;">${r.cta}</p>
+      </div>
+      <button class="copy-btn" onclick="copyText(${JSON.stringify(r.cta)}, this)">Copy</button>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <span class="mono" style="font-size:11px; letter-spacing:1.2px; color:#8A8D96; text-transform:uppercase;"># Caption & Tags</span>
+        <button class="copy-btn" onclick="copyText(${JSON.stringify(r.caption + "\\n\\n" + (r.hashtags||[]).join(" "))}, this)">Copy</button>
+      </div>
+      <p style="font-size:14px; line-height:1.55; color:#DCDBD6; margin:0 0 10px;">${r.caption}</p>
+      <div style="display:flex; flex-wrap:wrap; gap:6px;">${hashtagChips}</div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button class="btn-secondary" style="flex:1;" onclick="generate()">↻ Naya Version</button>
+      <button class="btn-primary" style="flex:1; margin-top:0;" onclick="copyText(fullScriptText(), this)">Full Script Copy</button>
+    </div>
+  `;
+}
+window.setActiveHook = (i) => { state.activeHook = i; renderResult(); };
+window.copyText = copyText;
+window.fullScriptText = fullScriptText;
+window.generate = generate;
+
+async function generate() {
+  const niche = nicheEl.value.trim();
+  const topic = topicEl.value.trim();
+  if (!niche || !topic || state.loading) return;
+
+  state.loading = true;
+  errorMsg.style.display = "none";
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin" style="display:inline-block;">↻</span> Likh raha hoon...';
+
+  try {
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        niche, topic,
+        platform: state.platform, tone: state.tone,
+        language: state.language, duration: state.duration
+      })
+    });
+    if (!res.ok) throw new Error("Request failed");
+    const parsed = await res.json();
+    state.result = parsed;
+    state.activeHook = 0;
+    renderResult();
+    document.getElementById("resultWrap").scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (e) {
+    errorMsg.textContent = "Script generate nahi ho paaya. Thoda detail check karke dobara try karo.";
+    errorMsg.style.display = "block";
+  } finally {
+    state.loading = false;
+    btn.innerHTML = "Script Generate Karo";
+    updateButtonState();
+  }
+}
+btn.addEventListener("click", generate);
+</script>
+</body>
+  </html>
